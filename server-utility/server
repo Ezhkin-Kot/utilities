@@ -7,7 +7,7 @@ if [ -f "$ENV_FILE" ]; then
   . "$ENV_FILE"
 else
   echo "Error: .env file not found."
-  echo "Read how to configure it: https://github.com/Ezhkin-Kot/utilities/server-utility"
+  echo "Read how to configure it: https://github.com/Ezhkin-Kot/utilities/blob/master/server-utility/README.md"
   exit 1
 fi
 
