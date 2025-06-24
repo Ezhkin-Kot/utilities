@@ -2,7 +2,14 @@
 COMMAND="$1"
 shift
 
-DEFAULT_SERVER_NAME="ezhkin-server"
+ENV_FILE="$(dirname "$0")/.env"
+if [ -f "$ENV_FILE" ]; then
+  . "$ENV_FILE"
+else
+  echo "Error: .env file not found."
+  echo "Read how to configure it: https://github.com/Ezhkin-Kot/utilities/server-utility"
+  exit 1
+fi
 
 case "$COMMAND" in
   start)
@@ -10,7 +17,7 @@ case "$COMMAND" in
 
     ROUTER_IP=$(tailscale status | grep openwrt | awk '{print $1}')
     
-    ssh root@$ROUTER_IP "etherwake -i br-lan 38:d5:47:7c:ba:bb"
+    ssh root@$ROUTER_IP "etherwake -i br-lan $WOL_MAC"
     ;;
   connect|stop)
     SERVER_NAME="$DEFAULT_SERVER_NAME"
