@@ -1,0 +1,63 @@
+#!/bin/sh
+COMMAND="$1"
+shift
+
+DEFAULT_SERVER_NAME="ezhkin-server"
+
+case "$COMMAND" in
+  start)
+    tailscale up
+
+    ROUTER_IP=$(tailscale status | grep openwrt | awk '{print $1}')
+    
+    ssh root@$ROUTER_IP "etherwake -i br-lan 38:d5:47:7c:ba:bb"
+    ;;
+  connect|stop)
+    SERVER_NAME="$DEFAULT_SERVER_NAME"
+    PORT=""
+
+    while getopts "s:p:" opt; do
+      case "$opt" in
+        s) SERVER_NAME="$OPTARG" ;;
+        p) PORT="$OPTARG" ;;
+        \?)
+          SCRIPT_NAME=$(basename "$0")
+          echo "Usage: $SCRIPT_NAME $COMMAND [-s server_name] [-p port]"
+          exit 1
+          ;;
+      esac
+    done
+
+    tailscale up
+
+    SERVER_IP=$(tailscale status | grep $SERVER_NAME | awk '{print $1}')
+
+    if [ -z "$SERVER_IP" ]; then
+      echo "Error: server '$SERVER_NAME' not found in Tailscale."
+      exit 1
+    fi
+
+    if [ "$COMMAND" = "connect" ]; then
+      if [ -z "$PORT" ]; then
+        ssh root@$SERVER_IP
+      else
+        ssh root@$SERVER_IP -p "$PORT"
+      fi
+    else # stop
+      if [ -z "$PORT" ]; then
+        ssh root@$SERVER_IP "shutdown -h now"
+      else
+        ssh root@$SERVER_IP -p "$PORT" "shutdown -h now"
+      fi
+    fi
+    ;;
+  *)
+    SCRIPT_NAME=$(basename "$0")
+    echo "Usage:"
+    echo "  $SCRIPT_NAME start"
+    echo "  $SCRIPT_NAME stop"
+    echo "  $SCRIPT_NAME connect [server_name] [-p port]"
+    exit 1
+    ;;
+esac
+
