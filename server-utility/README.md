@@ -1,6 +1,10 @@
 # Server Utility
 
-You should have OpenWRT router connected to your server, enable Wake-on-LAN in server BIOS and configure your Tailscale network to use this script.
+To use this script, you should have:
+- OpenWRT router connected to your server via LAN
+- Wake-on-LAN enabled in server BIOS 
+- Configured Tailscale network
+- SSH connection to your server
 
 Also you can add this script to your PATH in your .zshrc or .bashrc:
 ```sh
@@ -24,11 +28,11 @@ server start
 ## Connect to server
 
 ```bash
-server connect [-s server_name] [-p port]
+server connect [-s server_name] [-u user] [-p port]
 ```
 
 ## Stop server
 
 ```bash
-server stop [-s server_name] [-p port]
+server stop [-s server_name] [-u user] [-p port]
 ```
