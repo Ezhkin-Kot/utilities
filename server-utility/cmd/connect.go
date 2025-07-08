@@ -6,7 +6,7 @@ import (
 )
 
 var connectCmd = &cobra.Command{
-	Use:   "connect [-h host] [-u user] [-p port]",
+	Use:   "connect",
 	Short: "Connect to server",
 	Run: func(cmd *cobra.Command, args []string) {
 		hostName := viper.GetString("hostName")
@@ -21,12 +21,12 @@ func init() {
 	rootCmd.AddCommand(connectCmd)
 
 	connectCmd.Flags().
-		StringP("host", "h", "", "Host name in Tailscale to connect")
+		StringP("server", "s", "", "Host name in Tailscale to connect")
 	connectCmd.Flags().
 		StringP("user", "u", "", "User name in server to connect")
 	connectCmd.Flags().StringP("port", "p", "22", "Server port to connect")
 
-	viper.BindPFlag("hostName", connectCmd.Flags().Lookup("host"))
-	viper.BindPFlag("serverPort", connectCmd.Flags().Lookup("port"))
+	viper.BindPFlag("hostName", connectCmd.Flags().Lookup("server"))
 	viper.BindPFlag("userName", connectCmd.Flags().Lookup("user"))
+	viper.BindPFlag("serverPort", connectCmd.Flags().Lookup("port"))
 }
