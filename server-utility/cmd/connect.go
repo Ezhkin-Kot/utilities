@@ -1,25 +1,32 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var connectCmd = &cobra.Command{
-	Use:   "connect [-s server-name] [-u user] [-p port]",
+	Use:   "connect [-h host] [-u user] [-p port]",
 	Short: "Connect to server",
-	Long:  "Connect to server",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Connect to server")
+		hostName := viper.GetString("hostName")
+		serverPort := viper.GetString("serverPort")
+		userName := viper.GetString("userName")
+
+		Connect(hostName, userName, serverPort)
 	},
 }
 
 func init() {
-	connectCmd.Flags().
-		StringVarP(&serverName, "server", "s", "server", "server name to connect")
-	connectCmd.Flags().
-		StringVarP(&userName, "user", "u", "root", "user name in server to connect")
-	connectCmd.Flags().StringVarP(&port, "port", "p", "22", "port to connect")
 	rootCmd.AddCommand(connectCmd)
+
+	connectCmd.Flags().
+		StringP("host", "h", "", "Host name in Tailscale to connect")
+	connectCmd.Flags().
+		StringP("user", "u", "", "User name in server to connect")
+	connectCmd.Flags().StringP("port", "p", "22", "Server port to connect")
+
+	viper.BindPFlag("hostName", connectCmd.Flags().Lookup("host"))
+	viper.BindPFlag("serverPort", connectCmd.Flags().Lookup("port"))
+	viper.BindPFlag("userName", connectCmd.Flags().Lookup("user"))
 }
