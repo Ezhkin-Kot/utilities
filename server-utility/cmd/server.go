@@ -69,6 +69,7 @@ func findHostIp(hostName string) string {
 		os.Exit(1)
 	}
 
+	// Extract host IP
 	var ip string
 	for _, peer := range status.Peer {
 		if peer.HostName == hostName {
