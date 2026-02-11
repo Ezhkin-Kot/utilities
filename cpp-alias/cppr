@@ -22,11 +22,13 @@ case "$CPP_FILE" in
 esac
 
 EXECUTABLE_FILE="${CPP_FILE%.cpp}"
+BUILD_DIR="build"
 
-g++-15 "$CPP_FILE" -o "$EXECUTABLE_FILE"
+mkdir -p "$BUILD_DIR"
+g++-15 "$CPP_FILE" -o "$BUILD_DIR/$EXECUTABLE_FILE"
 if [ $? -ne 0 ]; then
   echo "Compilation failed"
   exit 1
 fi
 
-"./$EXECUTABLE_FILE"
+"./$BUILD_DIR/$EXECUTABLE_FILE"
